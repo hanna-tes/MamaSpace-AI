@@ -1,7 +1,7 @@
 import os
 from langchain_community.document_loaders import PyPDFDirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import PGVector
 
 # 1. Load and chunk the PDFs
@@ -23,7 +23,7 @@ print("🧠 Loading embedding model (this might take a minute the first time)...
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 # 3. Store in PostgreSQL
-# We use localhost and your Mac user since we created the DB via Homebrew
+# We use localhost since we created the DB via Homebrew
 CONNECTION_STRING = "postgresql+psycopg2://localhost/mamaspace_db"
 COLLECTION_NAME = "mamaspace_docs"
 
