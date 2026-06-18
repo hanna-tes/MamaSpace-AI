@@ -24,7 +24,7 @@ embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-
 
 # 3. Store in PostgreSQL
 # We use localhost since we created the DB via Homebrew
-CONNECTION_STRING = "postgresql+psycopg2://localhost/mamaspace_db"
+CONNECTION_STRING = "postgresql+psycopg2://neondb_owner:npg_6MmHNsdq4Orc@ep-flat-dawn-ah55cez7.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require"
 COLLECTION_NAME = "mamaspace_docs"
 
 print("💾 Storing embeddings in PostgreSQL...")
