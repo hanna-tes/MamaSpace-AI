@@ -9,3 +9,4 @@ psycopg2-binary
 pgvector
 python-dotenv
 sentence-transformers
+torchvision
