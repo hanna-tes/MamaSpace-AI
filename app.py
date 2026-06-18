@@ -19,7 +19,7 @@ load_dotenv()
 # ==========================================
 # 1. UI & THEME SETUP ("Mother-Baby Love")
 # ==========================================
-st.set_page_config(page_title="MamaSpace 🌸", page_icon="🤱", layout="centered")
+st.set_page_config(page_title="MamaSpace 🌸", page_icon="", layout="centered")
 
 # Custom CSS - NUCLEAR OVERRIDE FOR STREAMLIT CLOUD + AVATAR FIX
 st.markdown("""
@@ -179,7 +179,7 @@ st.markdown("""
     
     /* Inject Mother-Baby emoji for assistant */
     .stChatMessage[role="assistant"] .stAvatar::before {
-        content: "🤱";
+        content: "";
         font-size: 28px !important;
         position: absolute;
         top: 50%;
@@ -229,8 +229,8 @@ I hear how much pain you are in right now, and I am so glad you reached out. Bec
 **Please reach out to someone who can help right now:**
 - 🚑 **National Ambulance / Emergency:** Call **908** or **991** (Unified Emergency)
 -  **Immediate Medical Care:** Go immediately to the nearest hospital emergency room (such as Amanuel Mental Specialized Hospital in Addis Ababa, or your local regional/zonal hospital).
-- 🤝 **Local Health Support:** Contact your nearest Woreda health center or a trusted doctor immediately.
-- 💕 **Do not stay alone:** Please call a family member, friend, or neighbor to come sit with you right now.
+-  **Local Health Support:** Contact your nearest Woreda health center or a trusted doctor immediately.
+-  **Do not stay alone:** Please call a family member, friend, or neighbor to come sit with you right now.
 
 You are a wonderful mother, and this feeling will pass with the right help. Please take that brave step and call them now. We are here with you. 💕
 """
@@ -309,7 +309,7 @@ if prompt := st.chat_input("Share what's on your heart..."):
                 2. Always validate their feelings first. Use a gentle, loving, and non-judgmental tone.
                 3. If the context doesn't have the answer, gently say you aren't sure, but remind them they are not alone.
                 4. Keep responses concise, comforting, and easy to read for a tired mom.
-                5. Use emojis sparingly to add warmth (🌸, 💕, 🤱)."""
+                5. Use emojis sparingly to add warmth (🌸, , 🤱)."""
                 
                 # Retrieve relevant context from Postgres
                 docs = db.similarity_search(prompt, k=3)
