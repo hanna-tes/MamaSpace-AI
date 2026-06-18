@@ -24,23 +24,41 @@ st.markdown("""
         background: rgba(255, 228, 225, 0.6);
         backdrop-filter: blur(10px);
     }
+    /* Main text - make it dark and readable */
+    .stMarkdown, p, h1, h2, h3, h4, h5, h6 {
+        color: #5D4037 !important;
+    }
     /* Chat input box: Soft pink rounded pill */
     .stChatInput textarea {
         background-color: #FFFFFF !important;
         border: 2px solid #FFB6C1 !important;
         border-radius: 25px !important;
         box-shadow: 0 4px 6px rgba(255, 182, 193, 0.2) !important;
+        color: #5D4037 !important;
     }
     /* Headers: Warm, comforting brown */
     h1, h2, h3 {
-        color: #8B4513 !important; 
+        color: #5D4037 !important; 
         font-family: 'Georgia', serif !important;
     }
-    /* Chat message bubbles: Soft and rounded */
+    /* Chat message bubbles: Soft and rounded with better contrast */
     .stChatMessage {
-        background-color: rgba(255, 255, 255, 0.8) !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
         border-radius: 15px !important;
         padding: 15px !important;
+        border: 1px solid #FFD1DC !important;
+    }
+    /* User message text */
+    .stChatMessage .stMarkdown {
+        color: #5D4037 !important;
+    }
+    /* Assistant message text */
+    .stChatMessage[data-testid="stChatMessage"] .stMarkdown {
+        color: #5D4037 !important;
+    }
+    /* Make sure all paragraphs and text are dark */
+    div[data-testid="stMarkdownContainer"] p {
+        color: #5D4037 !important;
     }
     /* Hide default streamlit footer and menu */
     footer {visibility: hidden;}
