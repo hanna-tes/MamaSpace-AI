@@ -1,4 +1,13 @@
 import streamlit as st
+
+# ==========================================
+# FORCE LIGHT THEME BEFORE ANYTHING ELSE
+# ==========================================
+st.config.set_option("theme.base", "light")
+st.config.set_option("theme.backgroundColor", "#FFF0F5")
+st.config.set_option("theme.secondaryBackgroundColor", "#FFFFFF")
+st.config.set_option("theme.textColor", "#5D4037")
+
 from langchain_community.vectorstores import PGVector
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
@@ -10,10 +19,9 @@ load_dotenv()
 # ==========================================
 # 1. UI & THEME SETUP ("Mother-Baby Love")
 # ==========================================
-st.set_page_config(page_title="MamaSpace 🌸", page_icon="🤱", layout="centered")
+st.set_page_config(page_title="MamaSpace 🌸", page_icon="", layout="centered")
 
-# Custom CSS for a warm, soft, and comforting aesthetic
-# Custom CSS for a warm, soft, and comforting aesthetic
+# Custom CSS - NUCLEAR OVERRIDE FOR STREAMLIT CLOUD
 st.markdown("""
 <style>
     /* Force light theme globally */
@@ -27,7 +35,10 @@ st.markdown("""
     body, 
     html,
     #root,
-    .stApp div[data-testid="stAppViewContainer"] {
+    .stApp div[data-testid="stAppViewContainer"],
+    .st-emotion-cache-1y4pqt8,
+    .st-emotion-cache-12w0qpk,
+    .st-emotion-cache-163rfvq {
         background: linear-gradient(135deg, #FFF0F5 0%, #FDF5E6 50%, #F0FFF0 100%) !important;
         background-color: #FFF0F5 !important;
     }
@@ -39,13 +50,10 @@ st.markdown("""
     [data-testid="stChatMessageContainer"],
     .stChatInputContainer,
     .stChatMessage,
-    .st-emotion-cache-12w0qpk,
-    .st-emotion-cache-163rfvq,
-    .st-emotion-cache-1lcb6hc,
-    .st-emotion-cache-77ni1x,
-    .st-emotion-cache-1y4pqt8,
     footer,
-    header {
+    header,
+    .st-emotion-cache-77ni1x,
+    .st-emotion-cache-1lcb6hc {
         background: transparent !important;
         background-color: transparent !important;
         box-shadow: none !important;
@@ -76,7 +84,8 @@ st.markdown("""
     .stChatInputContainer,
     [data-testid="stChatInputContainer"],
     .st-emotion-cache-1y4pqt8,
-    div[data-testid="stChatInputContainer"] {
+    div[data-testid="stChatInputContainer"],
+    .st-emotion-cache-12w0qpk > div:last-child {
         background: rgba(255, 255, 255, 0.95) !important;
         background-color: rgba(255, 255, 255, 0.95) !important;
         border-radius: 25px !important;
@@ -160,18 +169,6 @@ st.markdown("""
         margin: 30px auto !important;
         max-width: 850px !important;
     }
-    
-    /* Override Streamlit default theme colors */
-    .st-emotion-cache-12w0qpk {
-        background: transparent !important;
-    }
-    
-    /* Fix for any remaining dark containers */
-    div[class*="stChatInput"],
-    div[class*="bottom"],
-    div[class*="Bottom"] {
-        background: rgba(255, 255, 255, 0.95) !important;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -208,7 +205,7 @@ You are a wonderful mother, and this feeling will pass with the right help. Plea
 @st.cache_resource
 def load_rag():
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    CONNECTION_STRING = "postgresql+psycopg2://localhost/mamaspace_db"
+    CONNECTION_STRING = st.secrets["DATABASE_URL"]
     COLLECTION_NAME = "mamaspace_docs"
     
     # Connect to Postgres Vector DB
@@ -221,8 +218,8 @@ def load_rag():
     # Using Groq for fast, free LLM inference - UPDATED MODEL
     llm = ChatGroq(
         temperature=0.7, 
-        model_name="llama-3.3-70b-versatile",  # NEW MODEL (replaces decommissioned llama-3.1-70b)
-        groq_api_key=os.getenv("GROQ_API_KEY")
+        model_name="llama-3.3-70b-versatile",
+        groq_api_key=st.secrets["GROQ_API_KEY"]
     )
     
     return db, llm
@@ -232,7 +229,7 @@ def load_rag():
 # ==========================================
 
 # Beautiful header with emojis
-st.title("MamaSpace 🤱🌸")
+st.title("MamaSpace 🤱")
 st.markdown("<p style='font-size: 20px; color: #5D4037; font-style: italic;'>A gentle, safe space for your postpartum journey.</p>", unsafe_allow_html=True)
 st.markdown("<div style='text-align: center; color: #8B7355; margin-bottom: 30px;'>I'm here to listen, support, and share gentle coping strategies. Remember, you are doing a beautiful job, even on the hard days. 💕</div>", unsafe_allow_html=True)
 st.markdown("<hr style='border: 1px solid #FFD1DC; margin: 30px 0;'>", unsafe_allow_html=True)
@@ -245,26 +242,26 @@ if "messages" not in st.session_state:
 
 # Display chat messages from history
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
+    with st.chat_message(message["role"], avatar="💬" if message["role"] == "assistant" else "👩"):
         st.markdown(message["content"])
 
 # Chat input with better styling
 if prompt := st.chat_input("Share what's on your heart..."):
     # Display user message
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar="👩"):
         st.markdown(prompt)
         
     # --- SAFETY CHECK ---
     if check_safety(prompt):
         response = CRISIS_RESPONSE
         st.session_state.messages.append({"role": "assistant", "content": response})
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant", avatar="💬"):
             st.markdown(response)
     else:
         # --- GENERATE RAG RESPONSE ---
-        with st.chat_message("assistant"):
-            with st.spinner("Listening and gathering gentle support... 🌸"):
+        with st.chat_message("assistant", avatar="💬"):
+            with st.spinner("Listening and gathering gentle support... "):
                 db, llm = load_rag()
                 
                 # System prompt enforcing behavioral science & empathy
