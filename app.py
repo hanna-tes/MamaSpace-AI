@@ -13,7 +13,6 @@ load_dotenv()
 st.set_page_config(page_title="MamaSpace 🌸", page_icon="🤱", layout="centered")
 
 # Custom CSS for a warm, soft, and comforting aesthetic
-# Custom CSS for a warm, soft, and comforting aesthetic
 st.markdown("""
 <style>
     /* Main background: Soft, warm, comforting gradient - NO BLACK */
@@ -22,12 +21,19 @@ st.markdown("""
         min-height: 100vh;
     }
     
-    /* Remove ALL dark backgrounds */
+    /* Remove ALL dark backgrounds - aggressive targeting */
     [data-testid="stBottomBlockContainer"], 
+    [data-testid="stBottomContainer"],
+    [data-testid="stChatInputContainer"],
     .stChatInputContainer,
     .stChatMessage,
-    [data-testid="stBottomContainer"] {
+    div[data-testid="stChatMessage"],
+    .st-emotion-cache-12w0qpk,
+    .st-emotion-cache-163rfvq,
+    .st-emotion-cache-1lcb6hc,
+    footer {
         background: transparent !important;
+        background-color: transparent !important;
         box-shadow: none !important;
     }
     
@@ -40,7 +46,8 @@ st.markdown("""
     /* All text - dark brown for readability */
     .stMarkdown, p, h1, h2, h3, h4, h5, h6, 
     div[data-testid="stMarkdownContainer"] p,
-    .stChatMessage .stMarkdown {
+    .stChatMessage .stMarkdown,
+    label, span {
         color: #5D4037 !important;
         font-family: 'Georgia', serif !important;
     }
@@ -52,8 +59,10 @@ st.markdown("""
     }
     
     /* Chat input container - WHITE with soft pink border */
-    .stChatInputContainer {
-        background: rgba(255, 255, 255, 0.85) !important;
+    .stChatInputContainer,
+    [data-testid="stChatInputContainer"] {
+        background: rgba(255, 255, 255, 0.95) !important;
+        background-color: rgba(255, 255, 255, 0.95) !important;
         border-radius: 25px !important;
         padding: 20px 30px !important;
         margin: 20px auto !important;
@@ -63,7 +72,8 @@ st.markdown("""
     }
     
     /* Chat input textarea */
-    .stChatInput textarea {
+    .stChatInput textarea,
+    [data-testid="stChatInput"] textarea {
         background-color: #FFFFFF !important;
         border: none !important;
         border-radius: 25px !important;
@@ -80,7 +90,8 @@ st.markdown("""
     }
     
     /* Send button */
-    .stChatInput button[kind="secondary"] {
+    .stChatInput button[kind="secondary"],
+    [data-testid="stChatInput"] button {
         background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%) !important;
         border: none !important;
         border-radius: 50% !important;
@@ -90,7 +101,8 @@ st.markdown("""
     }
     
     /* Chat message bubbles */
-    .stChatMessage {
+    .stChatMessage,
+    [data-testid="stChatMessage"] {
         background-color: rgba(255, 255, 255, 0.95) !important;
         border-radius: 20px !important;
         padding: 20px 25px !important;
@@ -101,13 +113,15 @@ st.markdown("""
     }
     
     /* User message - soft pink gradient */
-    .stChatMessage[user] {
+    .stChatMessage[user],
+    [data-testid="stChatMessage"][user] {
         background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%) !important;
         border: 2px solid #FFB6C1 !important;
     }
     
     /* Assistant message - white */
-    .stChatMessage:not([user]) {
+    .stChatMessage:not([user]),
+    [data-testid="stChatMessage"]:not([user]) {
         background: rgba(255, 255, 255, 0.95) !important;
     }
     
@@ -118,8 +132,10 @@ st.markdown("""
     }
     
     /* Hide footer and menu */
-    footer {visibility: hidden !important;}
-    #MainMenu {visibility: hidden !important;}
+    footer, #MainMenu {
+        visibility: hidden !important;
+        display: none !important;
+    }
     
     /* Divider */
     hr {
@@ -127,6 +143,17 @@ st.markdown("""
         border-top: 1px solid #FFD1DC !important;
         margin: 30px auto !important;
         max-width: 850px !important;
+    }
+    
+    /* Override any remaining dark backgrounds */
+    div[class*="stChatInput"] {
+        background: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    /* Fix for the bottom container */
+    .st-emotion-cache-12w0qpk,
+    .st-emotion-cache-163rfvq {
+        background: transparent !important;
     }
 </style>
 """, unsafe_allow_html=True)
