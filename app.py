@@ -16,14 +16,17 @@ st.set_page_config(page_title="MamaSpace 🌸", page_icon="🤱", layout="center
 # Custom CSS for a warm, soft, and comforting aesthetic
 st.markdown("""
 <style>
-    /* Main background: Soft, warm, comforting gradient */
+    /* Main background: Soft, warm, comforting gradient - NO BLACK */
     .stApp {
-        background: linear-gradient(135deg, #FFF0F5 0%, #FDF5E6 50%, #F0FFF0 100%);
+        background: linear-gradient(135deg, #FFF0F5 0%, #FDF5E6 50%, #F0FFF0 100%) !important;
         min-height: 100vh;
     }
     
-    /* Remove all dark backgrounds */
-    .stChatInputContainer, .stChatMessage, [data-testid="stBottomBlockContainer"] {
+    /* Remove ALL dark backgrounds */
+    [data-testid="stBottomBlockContainer"], 
+    .stChatInputContainer,
+    .stChatMessage,
+    [data-testid="stBottomContainer"] {
         background: transparent !important;
         box-shadow: none !important;
     }
@@ -34,30 +37,32 @@ st.markdown("""
         backdrop-filter: blur(10px);
     }
     
-    /* Main text - make it dark and readable */
-    .stMarkdown, p, h1, h2, h3, h4, h5, h6, div[data-testid="stMarkdownContainer"] p {
+    /* All text - dark brown for readability */
+    .stMarkdown, p, h1, h2, h3, h4, h5, h6, 
+    div[data-testid="stMarkdownContainer"] p,
+    .stChatMessage .stMarkdown {
         color: #5D4037 !important;
         font-family: 'Georgia', serif !important;
     }
     
-    /* Headers: Warm, comforting brown */
+    /* Headers */
     h1, h2, h3 {
         color: #5D4037 !important; 
         font-family: 'Georgia', serif !important;
     }
     
-    /* Chat input container - clean and light */
+    /* Chat input container - WHITE with soft pink border */
     .stChatInputContainer {
-        background: rgba(255, 255, 255, 0.7) !important;
+        background: rgba(255, 255, 255, 0.85) !important;
         border-radius: 25px !important;
-        padding: 15px 25px !important;
+        padding: 20px 30px !important;
         margin: 20px auto !important;
         max-width: 900px !important;
         border: 2px solid #FFB6C1 !important;
-        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2) !important;
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.25) !important;
     }
     
-    /* Chat input box: Soft pink rounded pill */
+    /* Chat input textarea */
     .stChatInput textarea {
         background-color: #FFFFFF !important;
         border: none !important;
@@ -68,7 +73,7 @@ st.markdown("""
         box-shadow: none !important;
     }
     
-    /* Chat input placeholder text */
+    /* Placeholder text */
     .stChatInput textarea::placeholder {
         color: #A89F91 !important;
         opacity: 0.7 !important;
@@ -79,14 +84,14 @@ st.markdown("""
         background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%) !important;
         border: none !important;
         border-radius: 50% !important;
-        width: 45px !important;
-        height: 45px !important;
+        width: 48px !important;
+        height: 48px !important;
         box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3) !important;
     }
     
-    /* Chat message bubbles: Soft and rounded */
+    /* Chat message bubbles */
     .stChatMessage {
-        background-color: rgba(255, 255, 255, 0.9) !important;
+        background-color: rgba(255, 255, 255, 0.95) !important;
         border-radius: 20px !important;
         padding: 20px 25px !important;
         margin: 15px auto !important;
@@ -95,58 +100,28 @@ st.markdown("""
         box-shadow: 0 3px 10px rgba(255, 182, 193, 0.15) !important;
     }
     
-    /* User message text */
-    .stChatMessage .stMarkdown {
-        color: #5D4037 !important;
-        font-size: 16px !important;
-        line-height: 1.6 !important;
-    }
-    
-    /* Assistant message text */
-    .stChatMessage[data-testid="stChatMessage"] .stMarkdown {
-        color: #5D4037 !important;
-        font-size: 16px !important;
-        line-height: 1.6 !important;
-    }
-    
-    /* User message bubble - slightly different color */
+    /* User message - soft pink gradient */
     .stChatMessage[user] {
         background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%) !important;
         border: 2px solid #FFB6C1 !important;
-        margin-left: auto !important;
-        margin-right: 20px !important;
     }
     
-    /* Assistant message bubble */
+    /* Assistant message - white */
     .stChatMessage:not([user]) {
-        margin-left: 20px !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    /* Center alignment */
+    .element-container, .stChatMessage {
+        margin-left: auto !important;
         margin-right: auto !important;
     }
     
-    /* Center align the chat container */
-    .element-container {
-        max-width: 900px !important;
-        margin: 0 auto !important;
-    }
+    /* Hide footer and menu */
+    footer {visibility: hidden !important;}
+    #MainMenu {visibility: hidden !important;}
     
-    /* Hide default streamlit footer and menu */
-    footer {visibility: hidden;}
-    #MainMenu {visibility: hidden;}
-    
-    /* Welcome message container */
-    .welcome-container {
-        background: rgba(255, 255, 255, 0.85);
-        border-radius: 20px;
-        padding: 30px;
-        margin-bottom: 30px;
-        border: 2px solid #FFD1DC;
-        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
-        max-width: 850px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    /* Divider styling */
+    /* Divider */
     hr {
         border: none !important;
         border-top: 1px solid #FFD1DC !important;
