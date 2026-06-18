@@ -13,25 +13,39 @@ load_dotenv()
 st.set_page_config(page_title="MamaSpace 🌸", page_icon="🤱", layout="centered")
 
 # Custom CSS for a warm, soft, and comforting aesthetic
+# Custom CSS for a warm, soft, and comforting aesthetic
 st.markdown("""
 <style>
-    /* Main background: Soft, warm, comforting gradient - NO BLACK */
-    .stApp {
-        background: linear-gradient(135deg, #FFF0F5 0%, #FDF5E6 50%, #F0FFF0 100%) !important;
-        min-height: 100vh;
+    /* Force light theme globally */
+    :root {
+        --background-color: #FFF0F5 !important;
+        --text-color: #5D4037 !important;
     }
     
-    /* Remove ALL dark backgrounds - aggressive targeting */
-    [data-testid="stBottomBlockContainer"], 
-    [data-testid="stBottomContainer"],
+    /* Main app background - NO BLACK ANYWHERE */
+    .stApp, 
+    body, 
+    html,
+    #root,
+    .stApp div[data-testid="stAppViewContainer"] {
+        background: linear-gradient(135deg, #FFF0F5 0%, #FDF5E6 50%, #F0FFF0 100%) !important;
+        background-color: #FFF0F5 !important;
+    }
+    
+    /* Remove ALL dark/black backgrounds - aggressive targeting */
+    [data-testid="stBottomBlockContainer"],
+    [data-testid="stBottomContainer"], 
     [data-testid="stChatInputContainer"],
+    [data-testid="stChatMessageContainer"],
     .stChatInputContainer,
     .stChatMessage,
-    div[data-testid="stChatMessage"],
     .st-emotion-cache-12w0qpk,
     .st-emotion-cache-163rfvq,
     .st-emotion-cache-1lcb6hc,
-    footer {
+    .st-emotion-cache-77ni1x,
+    .st-emotion-cache-1y4pqt8,
+    footer,
+    header {
         background: transparent !important;
         background-color: transparent !important;
         box-shadow: none !important;
@@ -47,7 +61,7 @@ st.markdown("""
     .stMarkdown, p, h1, h2, h3, h4, h5, h6, 
     div[data-testid="stMarkdownContainer"] p,
     .stChatMessage .stMarkdown,
-    label, span {
+    label, span, div {
         color: #5D4037 !important;
         font-family: 'Georgia', serif !important;
     }
@@ -58,9 +72,11 @@ st.markdown("""
         font-family: 'Georgia', serif !important;
     }
     
-    /* Chat input container - WHITE with soft pink border */
+    /* Chat input container - FORCE WHITE BACKGROUND */
     .stChatInputContainer,
-    [data-testid="stChatInputContainer"] {
+    [data-testid="stChatInputContainer"],
+    .st-emotion-cache-1y4pqt8,
+    div[data-testid="stChatInputContainer"] {
         background: rgba(255, 255, 255, 0.95) !important;
         background-color: rgba(255, 255, 255, 0.95) !important;
         border-radius: 25px !important;
@@ -145,15 +161,16 @@ st.markdown("""
         max-width: 850px !important;
     }
     
-    /* Override any remaining dark backgrounds */
-    div[class*="stChatInput"] {
-        background: rgba(255, 255, 255, 0.95) !important;
+    /* Override Streamlit default theme colors */
+    .st-emotion-cache-12w0qpk {
+        background: transparent !important;
     }
     
-    /* Fix for the bottom container */
-    .st-emotion-cache-12w0qpk,
-    .st-emotion-cache-163rfvq {
-        background: transparent !important;
+    /* Fix for any remaining dark containers */
+    div[class*="stChatInput"],
+    div[class*="bottom"],
+    div[class*="Bottom"] {
+        background: rgba(255, 255, 255, 0.95) !important;
     }
 </style>
 """, unsafe_allow_html=True)
