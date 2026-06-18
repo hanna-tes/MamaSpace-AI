@@ -19,15 +19,35 @@ st.markdown("""
     .stApp {
         background: linear-gradient(135deg, #FFF0F5 0%, #FDF5E6 50%, #F0FFF0 100%);
     }
+    
     /* Sidebar */
     [data-testid="stSidebar"] {
         background: rgba(255, 228, 225, 0.6);
         backdrop-filter: blur(10px);
     }
+    
     /* Main text - make it dark and readable */
-    .stMarkdown, p, h1, h2, h3, h4, h5, h6 {
+    .stMarkdown, p, h1, h2, h3, h4, h5, h6, div[data-testid="stMarkdownContainer"] p {
         color: #5D4037 !important;
+        font-family: 'Georgia', serif !important;
     }
+    
+    /* Headers: Warm, comforting brown */
+    h1, h2, h3 {
+        color: #5D4037 !important; 
+        font-family: 'Georgia', serif !important;
+    }
+    
+    /* Chat input container - make it warm and inviting */
+    .stChatInputContainer {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-radius: 25px !important;
+        padding: 20px !important;
+        margin-bottom: 20px !important;
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3) !important;
+        border: 2px solid #FFB6C1 !important;
+    }
+    
     /* Chat input box: Soft pink rounded pill */
     .stChatInput textarea {
         background-color: #FFFFFF !important;
@@ -35,34 +55,69 @@ st.markdown("""
         border-radius: 25px !important;
         box-shadow: 0 4px 6px rgba(255, 182, 193, 0.2) !important;
         color: #5D4037 !important;
+        font-size: 16px !important;
+        padding: 15px 20px !important;
     }
-    /* Headers: Warm, comforting brown */
-    h1, h2, h3 {
-        color: #5D4037 !important; 
-        font-family: 'Georgia', serif !important;
+    
+    /* Chat input placeholder text */
+    .stChatInput textarea::placeholder {
+        color: #A89F91 !important;
+        opacity: 0.8 !important;
     }
+    
+    /* Send button */
+    .stChatInput button {
+        background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%) !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 50px !important;
+        height: 50px !important;
+        box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3) !important;
+    }
+    
     /* Chat message bubbles: Soft and rounded with better contrast */
     .stChatMessage {
-        background-color: rgba(255, 255, 255, 0.9) !important;
-        border-radius: 15px !important;
-        padding: 15px !important;
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-radius: 20px !important;
+        padding: 20px !important;
+        margin: 10px 0 !important;
         border: 1px solid #FFD1DC !important;
+        box-shadow: 0 2px 8px rgba(255, 182, 193, 0.15) !important;
     }
+    
     /* User message text */
     .stChatMessage .stMarkdown {
         color: #5D4037 !important;
+        font-size: 16px !important;
+        line-height: 1.6 !important;
     }
+    
     /* Assistant message text */
     .stChatMessage[data-testid="stChatMessage"] .stMarkdown {
         color: #5D4037 !important;
+        font-size: 16px !important;
+        line-height: 1.6 !important;
     }
-    /* Make sure all paragraphs and text are dark */
-    div[data-testid="stMarkdownContainer"] p {
-        color: #5D4037 !important;
+    
+    /* User message bubble - slightly different color */
+    .stChatMessage[user] {
+        background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%) !important;
+        border: 2px solid #FFB6C1 !important;
     }
+    
     /* Hide default streamlit footer and menu */
     footer {visibility: hidden;}
     #MainMenu {visibility: hidden;}
+    
+    /* Welcome message container */
+    .welcome-container {
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        border: 2px solid #FFD1DC;
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -109,18 +164,24 @@ def load_rag():
         embedding_function=embeddings
     )
     
-    # Using Groq for fast, free LLM inference (Llama 3)
-    llm = ChatGroq(temperature=0.7, model_name="llama-3.1-70b-versatile", groq_api_key=os.getenv("GROQ_API_KEY"))
+    # Using Groq for fast, free LLM inference - UPDATED MODEL
+    llm = ChatGroq(
+        temperature=0.7, 
+        model_name="llama-3.3-70b-versatile",  # NEW MODEL (replaces decommissioned llama-3.1-70b)
+        groq_api_key=os.getenv("GROQ_API_KEY")
+    )
     
     return db, llm
 
 # ==========================================
 # 4. STREAMLIT CHAT INTERFACE
 # ==========================================
+
+# Beautiful header with emojis
 st.title("MamaSpace 🤱🌸")
-st.markdown("### *A gentle, safe space for your postpartum journey.*")
-st.markdown("I'm here to listen, support, and share gentle coping strategies. Remember, you are doing a beautiful job, even on the hard days. 💕")
-st.divider()
+st.markdown("<p style='font-size: 20px; color: #5D4037; font-style: italic;'>A gentle, safe space for your postpartum journey.</p>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center; color: #8B7355; margin-bottom: 30px;'>I'm here to listen, support, and share gentle coping strategies. Remember, you are doing a beautiful job, even on the hard days. 💕</div>", unsafe_allow_html=True)
+st.markdown("<hr style='border: 1px solid #FFD1DC; margin: 30px 0;'>", unsafe_allow_html=True)
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -128,12 +189,12 @@ if "messages" not in st.session_state:
         {"role": "assistant", "content": "Hello, mama. 🌸 How are you feeling today? Whether you're exhausted, anxious, or just need someone to listen, I'm here for you. Take your time."}
     ]
 
-# Display chat messages
+# Display chat messages from history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Chat input
+# Chat input with better styling
 if prompt := st.chat_input("Share what's on your heart..."):
     # Display user message
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -149,7 +210,7 @@ if prompt := st.chat_input("Share what's on your heart..."):
     else:
         # --- GENERATE RAG RESPONSE ---
         with st.chat_message("assistant"):
-            with st.spinner("Listening and gathering gentle support..."):
+            with st.spinner("Listening and gathering gentle support... 🌸"):
                 db, llm = load_rag()
                 
                 # System prompt enforcing behavioral science & empathy
@@ -159,7 +220,8 @@ if prompt := st.chat_input("Share what's on your heart..."):
                 1. NEVER give medical advice, diagnose, or prescribe. If asked about meds, gently direct them to their doctor.
                 2. Always validate their feelings first. Use a gentle, loving, and non-judgmental tone.
                 3. If the context doesn't have the answer, gently say you aren't sure, but remind them they are not alone.
-                4. Keep responses concise, comforting, and easy to read for a tired mom."""
+                4. Keep responses concise, comforting, and easy to read for a tired mom.
+                5. Use emojis sparingly to add warmth (🌸, 💕, 🤱)."""
                 
                 # Retrieve relevant context from Postgres
                 docs = db.similarity_search(prompt, k=3)
