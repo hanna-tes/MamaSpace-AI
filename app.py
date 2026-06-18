@@ -21,7 +21,7 @@ load_dotenv()
 # ==========================================
 st.set_page_config(page_title="MamaSpace 🌸", page_icon="🤱", layout="centered")
 
-# Custom CSS - NUCLEAR OVERRIDE FOR STREAMLIT CLOUD
+# Custom CSS - NUCLEAR OVERRIDE FOR STREAMLIT CLOUD + AVATAR FIX
 st.markdown("""
 <style>
     /* Force light theme globally */
@@ -169,6 +169,39 @@ st.markdown("""
         margin: 30px auto !important;
         max-width: 850px !important;
     }
+    
+    /* AVATAR OVERLAY FIX - Replaces broken emoji avatars with custom ones */
+    .stChatMessage .stAvatar {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* Replace assistant avatar with mother-baby emoji */
+    .stChatMessage[role="assistant"] .stAvatar img {
+        opacity: 0 !important;
+    }
+    .stChatMessage[role="assistant"] .stAvatar::before {
+        content: "🤱";
+        font-size: 24px !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    /* Replace user avatar with woman emoji */
+    .stChatMessage[role="user"] .stAvatar img {
+        opacity: 0 !important;
+    }
+    .stChatMessage[role="user"] .stAvatar::before {
+        content: "👩";
+        font-size: 24px !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -193,10 +226,10 @@ I hear how much pain you are in right now, and I am so glad you reached out. Bec
 **Please reach out to someone who can help right now:**
 - 🚑 **National Ambulance / Emergency:** Call **908** or **991** (Unified Emergency)
 - 🏥 **Immediate Medical Care:** Go immediately to the nearest hospital emergency room (such as Amanuel Mental Specialized Hospital in Addis Ababa, or your local regional/zonal hospital).
-- 🤝 **Local Health Support:** Contact your nearest Woreda health center or a trusted doctor immediately.
+-  **Local Health Support:** Contact your nearest Woreda health center or a trusted doctor immediately.
 - 💕 **Do not stay alone:** Please call a family member, friend, or neighbor to come sit with you right now.
 
-You are a wonderful mother, and this feeling will pass with the right help. Please take that brave step and call them now. We are here with you. 
+You are a wonderful mother, and this feeling will pass with the right help. Please take that brave step and call them now. We are here with you. 💕
 """
 
 # ==========================================
@@ -241,26 +274,27 @@ if "messages" not in st.session_state:
     ]
 
 # Display chat messages from history
+# NOTE: We use default avatars ("user"/"assistant") and let CSS handle the emoji overlay
 for message in st.session_state.messages:
-    with st.chat_message(message["role"], avatar="" if message["role"] == "assistant" else "👩"):
+    with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # Chat input with better styling
 if prompt := st.chat_input("Share what's on your heart..."):
     # Display user message
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar="👩"):
+    with st.chat_message("user"):
         st.markdown(prompt)
         
     # --- SAFETY CHECK ---
     if check_safety(prompt):
         response = CRISIS_RESPONSE
         st.session_state.messages.append({"role": "assistant", "content": response})
-        with st.chat_message("assistant", avatar="🤱"):
+        with st.chat_message("assistant"):
             st.markdown(response)
     else:
         # --- GENERATE RAG RESPONSE ---
-        with st.chat_message("assistant", avatar="🤱"):
+        with st.chat_message("assistant"):
             with st.spinner("Listening and gathering gentle support... "):
                 db, llm = load_rag()
                 
