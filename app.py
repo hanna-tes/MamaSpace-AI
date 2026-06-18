@@ -19,7 +19,7 @@ load_dotenv()
 # ==========================================
 # 1. UI & THEME SETUP ("Mother-Baby Love")
 # ==========================================
-st.set_page_config(page_title="MamaSpace 🌸", page_icon="", layout="centered")
+st.set_page_config(page_title="MamaSpace 🌸", page_icon="🤱", layout="centered")
 
 # Custom CSS - NUCLEAR OVERRIDE FOR STREAMLIT CLOUD
 st.markdown("""
@@ -196,7 +196,7 @@ I hear how much pain you are in right now, and I am so glad you reached out. Bec
 - 🤝 **Local Health Support:** Contact your nearest Woreda health center or a trusted doctor immediately.
 - 💕 **Do not stay alone:** Please call a family member, friend, or neighbor to come sit with you right now.
 
-You are a wonderful mother, and this feeling will pass with the right help. Please take that brave step and call them now. We are here with you. 💕
+You are a wonderful mother, and this feeling will pass with the right help. Please take that brave step and call them now. We are here with you. 
 """
 
 # ==========================================
@@ -242,7 +242,7 @@ if "messages" not in st.session_state:
 
 # Display chat messages from history
 for message in st.session_state.messages:
-    with st.chat_message(message["role"], avatar="💬" if message["role"] == "assistant" else "👩"):
+    with st.chat_message(message["role"], avatar="" if message["role"] == "assistant" else "👩"):
         st.markdown(message["content"])
 
 # Chat input with better styling
@@ -256,11 +256,11 @@ if prompt := st.chat_input("Share what's on your heart..."):
     if check_safety(prompt):
         response = CRISIS_RESPONSE
         st.session_state.messages.append({"role": "assistant", "content": response})
-        with st.chat_message("assistant", avatar="💬"):
+        with st.chat_message("assistant", avatar="🤱"):
             st.markdown(response)
     else:
         # --- GENERATE RAG RESPONSE ---
-        with st.chat_message("assistant", avatar="💬"):
+        with st.chat_message("assistant", avatar="🤱"):
             with st.spinner("Listening and gathering gentle support... "):
                 db, llm = load_rag()
                 
