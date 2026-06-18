@@ -13,16 +13,24 @@ load_dotenv()
 st.set_page_config(page_title="MamaSpace 🌸", page_icon="🤱", layout="centered")
 
 # Custom CSS for a warm, soft, and comforting aesthetic
+# Custom CSS for a warm, soft, and comforting aesthetic
 st.markdown("""
 <style>
     /* Main background: Soft, warm, comforting gradient */
     .stApp {
         background: linear-gradient(135deg, #FFF0F5 0%, #FDF5E6 50%, #F0FFF0 100%);
+        min-height: 100vh;
+    }
+    
+    /* Remove all dark backgrounds */
+    .stChatInputContainer, .stChatMessage, [data-testid="stBottomBlockContainer"] {
+        background: transparent !important;
+        box-shadow: none !important;
     }
     
     /* Sidebar */
     [data-testid="stSidebar"] {
-        background: rgba(255, 228, 225, 0.6);
+        background: rgba(255, 228, 225, 0.6) !important;
         backdrop-filter: blur(10px);
     }
     
@@ -38,51 +46,53 @@ st.markdown("""
         font-family: 'Georgia', serif !important;
     }
     
-    /* Chat input container - make it warm and inviting */
+    /* Chat input container - clean and light */
     .stChatInputContainer {
-        background: rgba(255, 255, 255, 0.9) !important;
+        background: rgba(255, 255, 255, 0.7) !important;
         border-radius: 25px !important;
-        padding: 20px !important;
-        margin-bottom: 20px !important;
-        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3) !important;
+        padding: 15px 25px !important;
+        margin: 20px auto !important;
+        max-width: 900px !important;
         border: 2px solid #FFB6C1 !important;
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2) !important;
     }
     
     /* Chat input box: Soft pink rounded pill */
     .stChatInput textarea {
         background-color: #FFFFFF !important;
-        border: 2px solid #FFB6C1 !important;
+        border: none !important;
         border-radius: 25px !important;
-        box-shadow: 0 4px 6px rgba(255, 182, 193, 0.2) !important;
         color: #5D4037 !important;
         font-size: 16px !important;
         padding: 15px 20px !important;
+        box-shadow: none !important;
     }
     
     /* Chat input placeholder text */
     .stChatInput textarea::placeholder {
         color: #A89F91 !important;
-        opacity: 0.8 !important;
+        opacity: 0.7 !important;
     }
     
     /* Send button */
-    .stChatInput button {
+    .stChatInput button[kind="secondary"] {
         background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%) !important;
         border: none !important;
         border-radius: 50% !important;
-        width: 50px !important;
-        height: 50px !important;
-        box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3) !important;
+        width: 45px !important;
+        height: 45px !important;
+        box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3) !important;
     }
     
-    /* Chat message bubbles: Soft and rounded with better contrast */
+    /* Chat message bubbles: Soft and rounded */
     .stChatMessage {
-        background-color: rgba(255, 255, 255, 0.95) !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
         border-radius: 20px !important;
-        padding: 20px !important;
-        margin: 10px 0 !important;
-        border: 1px solid #FFD1DC !important;
-        box-shadow: 0 2px 8px rgba(255, 182, 193, 0.15) !important;
+        padding: 20px 25px !important;
+        margin: 15px auto !important;
+        max-width: 850px !important;
+        border: 1.5px solid #FFD1DC !important;
+        box-shadow: 0 3px 10px rgba(255, 182, 193, 0.15) !important;
     }
     
     /* User message text */
@@ -103,6 +113,20 @@ st.markdown("""
     .stChatMessage[user] {
         background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%) !important;
         border: 2px solid #FFB6C1 !important;
+        margin-left: auto !important;
+        margin-right: 20px !important;
+    }
+    
+    /* Assistant message bubble */
+    .stChatMessage:not([user]) {
+        margin-left: 20px !important;
+        margin-right: auto !important;
+    }
+    
+    /* Center align the chat container */
+    .element-container {
+        max-width: 900px !important;
+        margin: 0 auto !important;
     }
     
     /* Hide default streamlit footer and menu */
@@ -117,6 +141,17 @@ st.markdown("""
         margin-bottom: 30px;
         border: 2px solid #FFD1DC;
         box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
+        max-width: 850px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* Divider styling */
+    hr {
+        border: none !important;
+        border-top: 1px solid #FFD1DC !important;
+        margin: 30px auto !important;
+        max-width: 850px !important;
     }
 </style>
 """, unsafe_allow_html=True)
