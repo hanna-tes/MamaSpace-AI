@@ -170,37 +170,40 @@ st.markdown("""
         max-width: 850px !important;
     }
     
-    /* AVATAR OVERLAY FIX - Replaces broken emoji avatars with custom ones */
-    .stChatMessage .stAvatar {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
+    /* === AVATAR EMOJI OVERLAY FIX === */
+    /* Hide the default broken avatar image */
+    .stChatMessage .stAvatar img {
+        opacity: 0 !important;
+        visibility: hidden !important;
     }
     
-    /* Replace assistant avatar with mother-baby emoji */
-    .stChatMessage[role="assistant"] .stAvatar img {
-        opacity: 0 !important;
-    }
+    /* Inject Mother-Baby emoji for assistant */
     .stChatMessage[role="assistant"] .stAvatar::before {
         content: "🤱";
-        font-size: 24px !important;
+        font-size: 28px !important;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        z-index: 10;
     }
     
-    /* Replace user avatar with woman emoji */
-    .stChatMessage[role="user"] .stAvatar img {
-        opacity: 0 !important;
-    }
+    /* Inject Woman emoji for user */
     .stChatMessage[role="user"] .stAvatar::before {
-        content: "👩";
-        font-size: 24px !important;
+        content: "";
+        font-size: 28px !important;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        z-index: 10;
+    }
+    
+    /* Ensure avatar container has relative positioning for ::before */
+    .stChatMessage .stAvatar {
+        position: relative !important;
+        background: transparent !important;
+        border: none !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -219,14 +222,14 @@ def check_safety(user_input):
     return any(keyword in input_lower for keyword in CRISIS_KEYWORDS)
 
 CRISIS_RESPONSE = """
-🌸 **You are not alone, and your life is precious.** 🌸
+🌸 **You are not alone, and your life is precious.** 
 
 I hear how much pain you are in right now, and I am so glad you reached out. Because you mentioned thoughts of harm, I need to make sure you get immediate, real-world support right there in Ethiopia. Please don't wait. 
 
 **Please reach out to someone who can help right now:**
 - 🚑 **National Ambulance / Emergency:** Call **908** or **991** (Unified Emergency)
-- 🏥 **Immediate Medical Care:** Go immediately to the nearest hospital emergency room (such as Amanuel Mental Specialized Hospital in Addis Ababa, or your local regional/zonal hospital).
--  **Local Health Support:** Contact your nearest Woreda health center or a trusted doctor immediately.
+-  **Immediate Medical Care:** Go immediately to the nearest hospital emergency room (such as Amanuel Mental Specialized Hospital in Addis Ababa, or your local regional/zonal hospital).
+- 🤝 **Local Health Support:** Contact your nearest Woreda health center or a trusted doctor immediately.
 - 💕 **Do not stay alone:** Please call a family member, friend, or neighbor to come sit with you right now.
 
 You are a wonderful mother, and this feeling will pass with the right help. Please take that brave step and call them now. We are here with you. 💕
@@ -270,11 +273,11 @@ st.markdown("<hr style='border: 1px solid #FFD1DC; margin: 30px 0;'>", unsafe_al
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Hello, mama. 🌸 How are you feeling today? Whether you're exhausted, anxious, or just need someone to listen, I'm here for you. Take your time."}
+        {"role": "assistant", "content": "Hello, mama.  How are you feeling today? Whether you're exhausted, anxious, or just need someone to listen, I'm here for you. Take your time."}
     ]
 
 # Display chat messages from history
-# NOTE: We use default avatars ("user"/"assistant") and let CSS handle the emoji overlay
+# NOTE: Removed avatar="" parameter to prevent crash. CSS handles the emoji overlay.
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
