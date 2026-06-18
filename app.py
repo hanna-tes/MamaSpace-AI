@@ -64,14 +64,15 @@ def check_safety(user_input):
 CRISIS_RESPONSE = """
 🌸 **You are not alone, and your life is precious.** 🌸
 
-I hear how much pain you are in right now, and I am so glad you reached out. Because you mentioned thoughts of harm, I need to make sure you get immediate, real-world support. Please don't wait. 
+I hear how much pain you are in right now, and I am so glad you reached out. Because you mentioned thoughts of harm, I need to make sure you get immediate, real-world support right there in Ethiopia. Please don't wait. 
 
 **Please reach out to someone who can help right now:**
-- 📞 **National Suicide Prevention Lifeline:** Call or text **988** (US/Canada)
-- 📞 **Postpartum Support International Helpline:** Call or text **1-800-944-4773**
-- 📞 **Emergency Services:** Call **911** or go to your nearest emergency room.
+- 🚑 **National Ambulance / Emergency:** Call **908** or **991** (Unified Emergency)
+- 🏥 **Immediate Medical Care:** Go immediately to the nearest hospital emergency room (such as Amanuel Mental Specialized Hospital in Addis Ababa, or your local regional/zonal hospital).
+- 🤝 **Local Health Support:** Contact your nearest Woreda health center or a trusted doctor immediately.
+- 💕 **Do not stay alone:** Please call a family member, friend, or neighbor to come sit with you right now.
 
-You are a wonderful mother, and this feeling will pass with the right help. Please take that brave step and call them now. I am here with you. 💕
+You are a wonderful mother, and this feeling will pass with the right help. Please take that brave step and call them now. We are here with you. 💕
 """
 
 # ==========================================
