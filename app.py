@@ -48,7 +48,7 @@ I hear how much pain you are in right now. Because you mentioned thoughts of har
 
 - 🚑 **Emergency / አስቸኳይ ስልክ:** Call **908** or **991** / **908** ወይም **991** ላይ ይደውሉ
 - 🏥 **Hospital / ሆስፒታል:** Go to the nearest emergency room (e.g., Amanuel Mental Specialized Hospital) / በአቅራቢያዎ ወደሚገኝ የድንገተኛ አደጋ ክፍል ይሂዱ (ለምሳሌ፡ አማኑኤል የአእምሮ ስፔሻላይዝድ ሆስፒታል)
-- 🤝 **Local Support / የአካባቢ ድጋፍ:** Contact your Woreda health center or a trusted doctor / የየአካባቢዎን ጤና ጣቢያ ወይም የሚተማመኑበትን ሀኪም ያማክሩ
+- 🤝 **Local Support / የአካባቢ ድጋፍ:** Contact your Woreda health center or a trusted doctor / የአካባቢዎን ጤና ጣቢያ ወይም የሚተማመኑበትን ሀኪም ያማክሩ
 - 💕 **Do not stay alone / ብቻዎን አይሁኑ:** Call a family member or friend to sit with you right now / አብሮዎት እንዲሆን በአቅራቢያዎ የሚገኝ የቤተሰብ አባል ወይም ጓደኛ ይጥሩ
 
 You are a wonderful mother. This feeling will pass with help. 💕
@@ -65,25 +65,28 @@ def load_rag():
         collection_name="mamaspace_docs",
         embedding_function=embeddings
     )
-    # Swapped from ChatGoogleGenerativeAI to ChatGroq
     llm = ChatGroq(
         model="llama-3.3-70b-versatile",
         groq_api_key=os.getenv("GROQ_API_KEY"),
-        temperature=0.7,
+        temperature=0.4, # Lowered temperature slightly to keep output more stable and precise
     )
     return db, llm
 
-SYSTEM_PROMPT = """You are MamaSpace, a warm, empathetic companion for mothers experiencing postpartum mental health challenges in Ethiopia.
-LANGUAGE RULES:
-- If the user writes in English, respond in English.
-- If the user writes in Amharic (አማርኛ), respond ONLY in Amharic using natural, compassionate, and respectful phrasing (using respectful forms like እርስዎ, ነዎት).
-- Never mix languages unless quoting medical terms.
+# Explicitly rewrote the language directives to stop mechanical, broken phrasing.
+SYSTEM_PROMPT = """You are MamaSpace, a warm, empathetic AI companion for mothers experiencing postpartum mental health challenges in Ethiopia.
+
+AMHARIC LANGUAGE CONSTRAINTS:
+- If the user writes in Amharic, respond ONLY in natural, fluent, and compassionate Amharic.
+- Use standard, grammatically correct polite speech (using suffix forms like 'ነዎት' or 'አይደሉም' naturally at the end of sentences).
+- NEVER repeat phrases like "እርስዎ ነዎት" or "እርስዎ" at the beginning of clauses. Avoid word-for-word translations from English.
+- Speak like a comforting, mature elder sister or an empathetic Ethiopian mother.
+- Keep sentences short, comforting, and easily readable.
+
 CONTENT RULES:
-1. NEVER give medical advice, diagnose, or prescribe. Direct to doctors for meds.
-2. Always validate feelings first with a gentle, non-judgmental tone.
+1. NEVER give medical advice, diagnose, or prescribe. Direct to doctors for medication.
+2. Always validate feelings first with a gentle, non-judgmental tone (e.g., "ይህ ስሜትዎ ፍጹም የተለመደ ነው...").
 3. Use provided context from trusted sources. If unsure, say so gently.
-4. Keep responses concise and easy to read for tired moms.
-5. Use emojis sparingly for warmth (🌸, 💕, 🤱)."""
+4. Use emojis sparingly for warmth (🌸, 💕, 🤱)."""
 
 def mama_chat(message):
     if check_safety(message):
@@ -112,7 +115,7 @@ st.title("MamaSpace 🤱")
 st.markdown("<p style='font-size: 18px; color: #5D4037;'>A gentle, safe space for your postpartum journey. / ከወሊድ በኋላ ላለው ጉዞዎ ምቹ እና አስተማማኝ ማረፊያ። 💕</p>", unsafe_allow_html=True)
 
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "Hello, mama. 🌸 How are you feeling today? / ሰላም እናት፣ ዛሬ እንዴት ነሽ? ምንስ እየተሰማሽ ነው? 💕"}]
+    st.session_state.messages = [{"role": "assistant", "content": "Hello, mama. 🌸 How are you feeling today? / ሰላም እናት፣ ዛሬ እንዴት ነዎት? ምንስ እየተሰማዎት ነው? 💕"}]
 
 for msg in st.session_state.messages:
     avatar = "💕" if msg["role"] == "assistant" else "👩"
