@@ -1,7 +1,7 @@
 import streamlit as st
 from langchain_community.vectorstores import PGVector
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 import os
 
 # ==========================================
@@ -48,14 +48,14 @@ I hear how much pain you are in right now. Because you mentioned thoughts of har
 
 - 🚑 **Emergency / አስቸኳይ ስልክ:** Call **908** or **991** / **908** ወይም **991** ላይ ይደውሉ
 - 🏥 **Hospital / ሆስፒታል:** Go to the nearest emergency room (e.g., Amanuel Mental Specialized Hospital) / በአቅራቢያዎ ወደሚገኝ የድንገተኛ አደጋ ክፍል ይሂዱ (ለምሳሌ፡ አማኑኤል የአእምሮ ስፔሻላይዝድ ሆስፒታል)
-- 🤝 **Local Support / የአካባቢ ድጋፍ:** Contact your Woreda health center or a trusted doctor / የአካባቢ ጤና ጣቢያ ወይም የሚተማመኑበትን ሀኪም ያማክሩ
+- 🤝 **Local Support / የአካባቢ ድጋፍ:** Contact your Woreda health center or a trusted doctor / የየአካባቢዎን ጤና ጣቢያ ወይም የሚተማመኑበትን ሀኪም ያማክሩ
 - 💕 **Do not stay alone / ብቻዎን አይሁኑ:** Call a family member or friend to sit with you right now / አብሮዎት እንዲሆን በአቅራቢያዎ የሚገኝ የቤተሰብ አባል ወይም ጓደኛ ይጥሩ
 
 You are a wonderful mother. This feeling will pass with help. 💕
 / እርስዎ ድንቅ እናት ነዎት። ይህ አስቸጋሪ ስሜት በትክክለኛ ድጋፍ ያልፋል። 💕"""
 
 # ==========================================
-# RAG & GEMINI SETUP (CACHED)
+# RAG & GROQ SETUP (CACHED)
 # ==========================================
 @st.cache_resource
 def load_rag():
@@ -65,9 +65,10 @@ def load_rag():
         collection_name="mamaspace_docs",
         embedding_function=embeddings
     )
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
-        google_api_key=os.getenv("GOOGLE_API_KEY"),
+    # Swapped from ChatGoogleGenerativeAI to ChatGroq
+    llm = ChatGroq(
+        model="llama-3.3-70b-versatile",
+        groq_api_key=os.getenv("GROQ_API_KEY"),
         temperature=0.7,
     )
     return db, llm
@@ -111,7 +112,7 @@ st.title("MamaSpace 🤱")
 st.markdown("<p style='font-size: 18px; color: #5D4037;'>A gentle, safe space for your postpartum journey. / ከወሊድ በኋላ ላለው ጉዞዎ ምቹ እና አስተማማኝ ማረፊያ። 💕</p>", unsafe_allow_html=True)
 
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "Hello, mama. 🌸 How are you feeling today? / ሰላም እናት፣ ዛሬ እንዴት ነዎት? ምንስ እየተሰማዎት ነው? 💕"}]
+    st.session_state.messages = [{"role": "assistant", "content": "Hello, mama. 🌸 How are you feeling today? / ሰላም እናት፣ ዛሬ እንዴት ነሽ? ምንስ እየተሰማሽ ነው? 💕"}]
 
 for msg in st.session_state.messages:
     avatar = "💕" if msg["role"] == "assistant" else "👩"
