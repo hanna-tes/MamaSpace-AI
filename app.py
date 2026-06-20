@@ -1,8 +1,32 @@
-import gradio as gr
+import streamlit as st
 from langchain_community.vectorstores import PGVector
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 import os
+
+# ==========================================
+# PAGE CONFIG & THEME
+# ==========================================
+st.set_page_config(page_title="MamaSpace 🤱", page_icon="🤱", layout="centered")
+
+st.markdown("""
+<style>
+    .stApp { background: linear-gradient(135deg, #FFF0F5 0%, #FDF5E6 50%, #F0FFF0 100%) !important; }
+    [data-testid="stSidebar"] { background: rgba(255, 228, 225, 0.6) !important; }
+    .stMarkdown, p, h1, h2, h3 { color: #5D4037 !important; font-family: 'Georgia', serif !important; }
+    .stChatMessage { 
+        background-color: rgba(255, 255, 255, 0.95) !important; 
+        border-radius: 20px !important; 
+        border: 1.5px solid #FFD1DC !important;
+        color: #5D4037 !important;
+    }
+    .stChatMessage[user] { 
+        background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%) !important; 
+        border: 2px solid #FFB6C1 !important; 
+    }
+    footer, #MainMenu { visibility: hidden !important; }
+</style>
+""", unsafe_allow_html=True)
 
 # ==========================================
 # SAFETY GUARDRAILS
@@ -14,8 +38,7 @@ CRISIS_KEYWORDS = [
 ]
 
 def check_safety(user_input):
-    input_lower = user_input.lower()
-    return any(keyword in input_lower for keyword in CRISIS_KEYWORDS)
+    return any(kw in user_input.lower() for kw in CRISIS_KEYWORDS)
 
 CRISIS_RESPONSE = """🌸 **You are not alone, and your life is precious.** 
 
@@ -30,43 +53,37 @@ I hear how much pain you are in right now, and I am so glad you reached out. Bec
 You are a wonderful mother, and this feeling will pass with the right help. Please take that brave step and call them now. We are here with you. 💕"""
 
 # ==========================================
-# RAG & LLM SETUP
+# RAG & LLM SETUP (CACHED)
 # ==========================================
-CONNECTION_STRING = os.getenv("DATABASE_URL")
-if not CONNECTION_STRING:
-    raise ValueError("DATABASE_URL environment variable is missing!")
-
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-COLLECTION_NAME = "mamaspace_docs"
-
-db = PGVector(
-    connection_string=CONNECTION_STRING,
-    collection_name=COLLECTION_NAME,
-    embedding_function=embeddings
-)
-
-llm = ChatGroq(
-    temperature=0.7, 
-    model_name="llama-3.3-70b-versatile",
-    groq_api_key=os.getenv("GROQ_API_KEY")
-)
+@st.cache_resource
+def load_rag():
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    db = PGVector(
+        connection_string=os.getenv("DATABASE_URL"),
+        collection_name="mamaspace_docs",
+        embedding_function=embeddings
+    )
+    llm = ChatGroq(
+        temperature=0.7, 
+        model_name="llama-3.3-70b-versatile",
+        groq_api_key=os.getenv("GROQ_API_KEY")
+    )
+    return db, llm
 
 SYSTEM_PROMPT = """You are a warm, empathetic, and supportive companion for mothers experiencing postpartum mental health challenges. 
 Your goal is to provide emotional support, validate their feelings, and share gentle coping strategies based on the provided context.
 RULES:
 1. NEVER give medical advice, diagnose, or prescribe. If asked about meds, gently direct them to their doctor.
 2. Always validate their feelings first. Use a gentle, loving, and non-judgmental tone.
-3. If the context doesn't have the answer, gently say you aren't sure, but remind them they are not alone.
+3. If the context doesn't have the answer, gently say you aren't sure, but remind they are not alone.
 4. Keep responses concise, comforting, and easy to read for a tired mom.
-5. Use emojis sparingly to add warmth (🌸, , 🤱)."""
+5. Use emojis sparingly to add warmth (, 💕, 🤱)."""
 
-# ==========================================
-# CHAT FUNCTION
-# ==========================================
-def mama_chat(message, history):
+def mama_chat(message):
     if check_safety(message):
         return CRISIS_RESPONSE
     
+    db, llm = load_rag()
     docs = db.similarity_search(message, k=3)
     context = "\n\n".join([doc.page_content for doc in docs])
     
@@ -83,67 +100,26 @@ Your gentle response:"""
     return response.content
 
 # ==========================================
-# CUSTOM PINK THEME (VALID TOKENS ONLY)
+# CHAT INTERFACE
 # ==========================================
-mama_theme = gr.themes.Soft(
-    primary_hue="pink",
-    secondary_hue="orange",
-    neutral_hue="stone",
-    font=[gr.themes.GoogleFont("Georgia"), "ui-sans-serif", "system-ui", "sans-serif"],
-).set(
-    body_background_fill="#FFF0F5",
-    body_text_color="#5D4037",
-    button_primary_background_fill="linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)",
-    button_primary_text_color="#FFFFFF",
-    block_title_text_color="#5D4037",
-)
+st.title("MamaSpace 🤱")
+st.markdown("<p style='font-size: 18px; color: #5D4037;'>A gentle, safe space for your postpartum journey. 💕</p>", unsafe_allow_html=True)
 
-# ==========================================
-# GRADIO INTERFACE WITH CUSTOM CSS
-# ==========================================
-demo = gr.ChatInterface(
-    fn=mama_chat,
-    title="MamaSpace 🤱",
-    description="A gentle, safe space for your postpartum journey. I'm here to listen, support, and share gentle coping strategies. Remember, you are doing a beautiful job, even on the hard days. 💕",
-    examples=[
-        "I feel like I'm losing myself and not being a good mom",
-        "Is this baby blues or postpartum depression?",
-        "I've been crying every day for 3 weeks, is this normal?",
-        "I don't feel connected to my baby, am I a bad mom?"
-    ],
-    theme=mama_theme,
-    avatar_images=("👩", "🤱"),
-    submit_btn="Share what's on your heart...",
-    retry_btn=None,
-    undo_btn=None,
-    clear_btn="Clear conversation",
-    css="""
-        /* GLOBAL STYLING */
-        body, .gradio-container {
-            background: linear-gradient(135deg, #FFF0F5 0%, #FDF5E6 50%, #F0FFF0 100%) !important;
-        }
-        
-        /* CHATBOT BUBBLES */
-        .message {
-            background-color: #FFFFFF !important;
-            border: 1px solid #FFD1DC !important;
-            border-radius: 20px !important;
-            color: #5D4037 !important;
-            padding: 15px 20px !important;
-            margin: 8px 0 !important;
-        }
-        
-        /* USER MESSAGE BUBBLE */
-        .message.user {
-            background: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%) !important;
-            border: 2px solid #FFB6C1 !important;
-        }
-        
-        /* HIDE UNWANTED ELEMENTS */
-        .additional-inputs { display: none !important; }
-        .footer { display: none !important; }
-    """
-)
+if "messages" not in st.session_state:
+    st.session_state.messages = [{"role": "assistant", "content": "Hello, mama.  How are you feeling today? Whether you're exhausted, anxious, or just need someone to listen, I'm here for you. Take your time."}]
 
-if __name__ == "__main__":
-    demo.launch()
+for msg in st.session_state.messages:
+    avatar = "💕" if msg["role"] == "assistant" else "👩"
+    with st.chat_message(msg["role"], avatar=avatar):
+        st.markdown(msg["content"])
+
+if prompt := st.chat_input("Share what's on your heart..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user", avatar="👩"):
+        st.markdown(prompt)
+    
+    with st.chat_message("assistant", avatar="💕"):
+        with st.spinner("Listening and gathering gentle support... 🌸"):
+            response = mama_chat(prompt)
+            st.markdown(response)
+            st.session_state.messages.append({"role": "assistant", "content": response})
