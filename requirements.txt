@@ -5,5 +5,7 @@ langchain-groq
 psycopg2-binary
 pgvector
 sentence-transformers
-torchvision
 python-dotenv
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.0+cpu
+torchvision==0.19.0+cpu
