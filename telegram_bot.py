@@ -2,6 +2,7 @@ import os
 import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from streamlit_app import load_rag, check_safety, CRISIS_RESPONSE, SYSTEM_PROMPT
 
 # Note: We still import your RAG loading functions and safety tools, 
 # but we keep the system prompt directly here for absolute clarity.
