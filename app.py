@@ -1,8 +1,10 @@
 import streamlit as st
-from langchain_community.vectorstores import PGVector
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_groq import ChatGroq
-import os
+from shared_logic import load_rag, check_safety, CRISIS_RESPONSE, SYSTEM_PROMPT
+
+# Re-wrap load_rag with Streamlit caching ONLY in this file
+@st.cache_resource
+def get_cached_rag():
+    return load_rag()
 
 # ==========================================
 # PAGE CONFIG & THEME
