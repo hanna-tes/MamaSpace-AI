@@ -1,7 +1,7 @@
 import streamlit as st
 from shared_logic import load_rag, check_safety, CRISIS_RESPONSE, SYSTEM_PROMPT
 
-# Re-wrap load_rag with Streamlit caching ONLY in this file
+# Re-wrap load_rag with Streamlit 
 @st.cache_resource
 def get_cached_rag():
     return load_rag()
