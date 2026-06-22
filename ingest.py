@@ -13,7 +13,7 @@ if not docs:
     print("❌ No PDFs found in the './data' folder. Please add your PDFs and try again.")
     exit()
 
-# We split the text into smaller chunks so the AI can easily search through them
+# split the text into smaller chunks so the AI can easily search through them
 splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 chunks = splitter.split_documents(docs)
 print(f"✅ Created {len(chunks)} chunks of text from your PDFs.")
@@ -23,7 +23,7 @@ print("🧠 Loading embedding model (this might take a minute the first time)...
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 # 3. Store in PostgreSQL
-# We use localhost since we created the DB via Homebrew
+# used localhost since we created the DB via Homebrew
 CONNECTION_STRING = "postgresql+psycopg2://neondb_owner:npg_6MmHNsdq4Orc@ep-flat-dawn-ah55cez7.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require"
 COLLECTION_NAME = "mamaspace_docs"
 
