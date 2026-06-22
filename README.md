@@ -1,4 +1,4 @@
-# 🤱 MamaSpace AI: A Guardrailed GenAI RAG for Maternal Mental Wellbeing
+# 🤱 Mamaspeace AI: A Guardrailed GenAI RAG for Maternal Mental Wellbeing
 
 Built with deep personal passion and clinical rigor to provide safe, empathetic, and immediate support for mothers navigating postpartum mental health challenges.
 
