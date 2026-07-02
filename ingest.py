@@ -23,7 +23,7 @@ print("🧠 Loading embedding model (this might take a minute the first time)...
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 # 3. Store in PostgreSQL
-# used localhost since we created the DB via Homebrew
+# used localhost since i created the DB via Homebrew
 CONNECTION_STRING = "postgresql+psycopg2://neondb_owner:npg_6MmHNsdq4Orc@ep-flat-dawn-ah55cez7.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require"
 COLLECTION_NAME = "mamaspace_docs"
 
